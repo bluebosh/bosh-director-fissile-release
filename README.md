@@ -1,4 +1,4 @@
-# BOSH Director fissile release
+# KUBE CPI BOSH Director fissile release
 
 This repository contains the files necessary to run a KUBE CPI BOSH Director using fissile.
 It is roughly equivalent to doing the same with BOSH.
