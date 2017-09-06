@@ -52,12 +52,6 @@ go get github.com/square/certstrap
      . .envrc
    ```
 
-1. Generate the SSL certificates required:
-
-    ```sh
-      make certs
-    ```
-
 1. Deploy bu using helm:
 
    ```sh
@@ -69,9 +63,7 @@ go get github.com/square/certstrap
    ```sh
      make deploy_kube cluster_name=<cluster_name>
    ```
-   There is an issue that cannot generate secret correctly, need it CPOY by yourself
-
-   ```
+   There is an issue that cannot generate secret correctly, need it COPY by yourself
 
 Note, the specified stemcell is an example. Change it to suit.  The
 alternative command uses the definition of `FISSILE_STEMCELL` in
