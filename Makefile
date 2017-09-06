@@ -6,7 +6,7 @@ endif
 build: certs releases images
 
 certs:
-	${GIT_ROOT}/make/generate-certs.sh
+	${GIT_ROOT}/generate-certs.sh
 
 releases:
 	${GIT_ROOT}/make/releases
