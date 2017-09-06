@@ -47,5 +47,6 @@ echo "[INFO] modify helm config"
 
 echo
 echo "[INFO] make run"
+helm init
 make run cluster_name=$cluster_name
 

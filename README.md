@@ -1,6 +1,6 @@
 # BOSH Director fissile release
 
-This repository contains the files necessary to run a BOSH Director using fissile.
+This repository contains the files necessary to run a KUBE CPI BOSH Director using fissile.
 It is roughly equivalent to doing the same with BOSH.
 
 ### fissile
@@ -41,6 +41,10 @@ go get github.com/square/certstrap
   ```sh
     git submodule update --init --recursive
   ```
+  If you cannot create Kubernetes CPI release successfully becase of golang blobstore issue, you can download it first by using:
+  ```sh
+    ./git-init.sh
+  ```  
 
 1. Load needed environment variables (optional, only if you don't use direnv):
 
@@ -54,72 +58,21 @@ go get github.com/square/certstrap
       make certs
     ```
 
-1. Create the releases:
+1. Deploy bu using helm:
 
    ```sh
-     make releases
+     make deploy cluster_name=<cluster name> init=<if re-create image>
    ```
 
-1. Get the opensuse stemcell:
+1. Deploy by using kube config:
 
    ```sh
-     docker pull $FISSILE_STEMCELL
+     make deploy_kube cluster_name=<cluster_name>
    ```
+   There is an issue that cannot generate secret correctly, need it CPOY by yourself
 
-1. Create a directory to write the release tarball into:
-
-   ```sh
-     mkdir -p output/splatform
    ```
-
-1. Build fissile images:
-
-   ```sh
-   STEMCELL=splatform/fissile-stemcell-opensuse:42.2-0.g58a22c9-28.16
-   fissile build packages --stemcell ${STEMCELL}
-   fissile build images   --stemcell ${STEMCELL}
-   ```
-
-Or, more convenient
-
-    ```sh
-    make images
-    ```
 
 Note, the specified stemcell is an example. Change it to suit.  The
 alternative command uses the definition of `FISSILE_STEMCELL` in
 `.envrc` for this.
-
-## Running
-
-The default configurations are designed for the [scf] vagrant box; see
-instructions there.
-
-[scf]: https://github.com/suse/scf
-
-1. If necessary, push the images to your Kubernetes nodes (or publish them in a
-    way that they get fetch the images).
-2. Build Kubernetes configs. This will create the files in a directory named `kube`:
-    ```
-    fissile build kube -k kube/ --use-memory-limits=false \
-        -D $(echo env/*.env | tr ' ' ',')
-    ```
-    If you are not building the images directly on the Kubernetes cluster (or if
-    you have multiple nodes), you will also need to specify
-    `--docker-registry=docker.registry:123456` (and possibly
-    `--docker-organization`) so that the images can be pulled.
-3. If you're not building directly on a single Kubernetes node that you will
-   deploy to, you will need to publish to the specified docker registry:
-   ```sh
-   fissile show image | xargs -i@ docker tag @ "${FISSILE_DOCKER_REGISTRY}/@"
-   fissile show image | xargs -i@ docker push "${FISSILE_DOCKER_REGISTRY}/@"
-   ```
-4. Deploy to Kubernetes
-    ```sh
-    # The following is a sample for hyperkube/minikube/vagrant
-    kubectl create -f kube-test/storage-class-host-path.yml
-
-    kubectl create namespace uaa
-
-    kubectl create -n uaa -f kube/bosh/
-    ```
